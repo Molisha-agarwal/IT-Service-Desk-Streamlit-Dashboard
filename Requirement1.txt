@@ -1,0 +1,8 @@
+Requirements -
+
+Streamlit
+Pandas
+Plotly
+Python
+HTML
+CSS
