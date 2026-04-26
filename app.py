@@ -76,8 +76,7 @@ def style_chart(fig):
              y=1.1
          )
      )
- 
-    return fig
+ return fig
  
 # # -------------------------------------------------
 # # CUSTOM CSS
@@ -211,16 +210,16 @@ def style_chart(fig):
 # # -------------------------------------------------
  df["created_date"]=pd.to_datetime(
  df["created_date"],
-format="mixed",
- dayfirst=True,
- errors="coerce"
+  format="mixed",
+  dayfirst=True,
+  errors="coerce"
  )
  
  df["closed_date"]=pd.to_datetime(
  df["closed_date"],
- format="mixed",
- dayfirst=True,
- errors="coerce"
+   format="mixed",
+   dayfirst=True,
+   errors="coerce"
  )
  
 df["created_date"]=df["created_date"].fillna(pd.Timestamp.today())
