@@ -33,18 +33,18 @@ multi_colors=[
 "#f472b6",
 "#2dd4bf",
 "#fbbf24",
- "#fb7185",
- "#22c55e",
- "#e879f9",
- "#06b6d4",
- "#f97316",
- "#14b8a6",
- "#a78bfa",
+"#fb7185",
+"#22c55e",
+"#e879f9",
+"#06b6d4",
+"#f97316",
+"#14b8a6",
+"#a78bfa",
 "#3b82f6"
  ]
 
- px.defaults.template="plotly_dark"
- px.defaults.color_discrete_sequence=custom_colors
+px.defaults.template="plotly_dark"
+px.defaults.color_discrete_sequence=custom_colors
  
  
 # # -------------------------------------------------
@@ -52,21 +52,21 @@ multi_colors=[
 # # -------------------------------------------------
 def style_chart(fig):
  
-          fig.update_layout(
+         fig.update_layout(
          hovermode="x unified",
          paper_bgcolor="rgba(0,0,0,0)",
          plot_bgcolor="rgba(0,0,0,0)",
          title_font=dict(size=22),
          font=dict(size=13),
-          xaxis=dict(
+         xaxis=dict(
              showgrid=False,
              zeroline=False
          ),
 
          yaxis=dict(
-             showgrid=True,
-             gridcolor="rgba(255,255,255,.08)",
-            zeroline=False
+              showgrid=True,
+              gridcolor="rgba(255,255,255,.08)",
+              zeroline=False
       ),
 
          bargap=.25,
