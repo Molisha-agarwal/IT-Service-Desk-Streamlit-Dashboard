@@ -1,8 +1,9 @@
 Requirements -
 
 Streamlit
-Pandas
-Plotly
-Python
+pandas
+plotly
+python
 HTML
 CSS
+fpdf
