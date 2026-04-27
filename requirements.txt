@@ -1,5 +1,3 @@
-Requirements -
-
 plotly
 streamlit
 pandas
