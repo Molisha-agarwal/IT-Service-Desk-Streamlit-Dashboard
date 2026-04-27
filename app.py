@@ -1,3 +1,5 @@
+%%writefile app.py
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -16,39 +18,39 @@ st.set_page_config(
 # -------------------------------------------------
 # GLOBAL THEME / COLORS
 # -------------------------------------------------
-custom_colors = [
-    "#38bdf8",
-    "#6366f1",
-    "#8b5cf6",
-    "#ec4899",
-    "#14b8a6",
-    "#f59e0b"
+custom_colors=[
+"#38bdf8",
+"#6366f1",
+"#8b5cf6",
+"#ec4899",
+"#14b8a6",
+"#f59e0b"
 ]
 
-multi_colors = [
-    "#38bdf8",
-    "#60a5fa",
-    "#818cf8",
-    "#c084fc",
-    "#f472b6",
-    "#2dd4bf",
-    "#fbbf24",
-    "#fb7185",
-    "#22c55e",
-    "#e879f9",
-    "#06b6d4",
-    "#f97316",
-    "#14b8a6",
-    "#a78bfa",
-    "#3b82f6"
+multi_colors=[
+"#38bdf8",
+"#60a5fa",
+"#818cf8",
+"#c084fc",
+"#f472b6",
+"#2dd4bf",
+"#fbbf24",
+"#fb7185",
+"#22c55e",
+"#e879f9",
+"#06b6d4",
+"#f97316",
+"#14b8a6",
+"#a78bfa",
+"#3b82f6"
 ]
 
-px.defaults.template = "plotly_dark"
-px.defaults.color_discrete_sequence = custom_colors
+px.defaults.template="plotly_dark"
+px.defaults.color_discrete_sequence=custom_colors
 
 
 # -------------------------------------------------
-# CHART STYLING FUNCTION
+# CHART STYLING FUNCTION (FIXED)
 # -------------------------------------------------
 def style_chart(fig):
 
@@ -154,7 +156,7 @@ padding:12px 22px;
 font-weight:700;
 }
 </style>
-""", unsafe_allow_html=True)
+""",unsafe_allow_html=True)
 
 
 # -------------------------------------------------
@@ -166,79 +168,79 @@ st.markdown('''
 <h4 style="color:#94a3b8">
 🚀 Real-Time Interactive Service Desk Analytics
 </h4>
-''', unsafe_allow_html=True)
+''',unsafe_allow_html=True)
 
 
 # -------------------------------------------------
 # LOAD DATA
 # -------------------------------------------------
-uploaded_file = st.sidebar.file_uploader(
-    "Upload CSV",
-    type=["csv"]
+uploaded_file=st.sidebar.file_uploader(
+"Upload CSV",
+type=["csv"]
 )
 
 if uploaded_file is None:
     st.stop()
 
-df = pd.read_csv(uploaded_file)
+df=pd.read_csv(uploaded_file)
 
 st.sidebar.success(
-    f"Loaded Records: {len(df)}"
+f"Loaded Records: {len(df)}"
 )
 
 
 # -------------------------------------------------
 # COLUMN MAPPING
 # -------------------------------------------------
-df.columns = (
-    df.columns
-    .str.strip()
-    .str.lower()
+df.columns=(
+df.columns
+.str.strip()
+.str.lower()
 )
 
-mapping = {
-    'request id': 'ticket_id',
-    'created time': 'created_date',
-    'completed time': 'closed_date',
-    'site': 'location',
-    'technician name': 'engineer',
-    'request status': 'status',
-    'priority type': 'priority',
-    'category': 'issue_type'
+mapping={
+'request id':'ticket_id',
+'created time':'created_date',
+'completed time':'closed_date',
+'site':'location',
+'technician name':'engineer',
+'request status':'status',
+'priority type':'priority',
+'category':'issue_type'
 }
 
-df.rename(columns=mapping, inplace=True)
+df.rename(columns=mapping,inplace=True)
 
 
 # -------------------------------------------------
 # DATES
 # -------------------------------------------------
-df["created_date"] = pd.to_datetime(
-    df["created_date"],
-    format="mixed",
-    dayfirst=True,
-    errors="coerce"
+df["created_date"]=pd.to_datetime(
+df["created_date"],
+format="mixed",
+dayfirst=True,
+errors="coerce"
 )
 
-df["closed_date"] = pd.to_datetime(
-    df["closed_date"],
-    format="mixed",
-    dayfirst=True,
-    errors="coerce"
+df["closed_date"]=pd.to_datetime(
+df["closed_date"],
+format="mixed",
+dayfirst=True,
+errors="coerce"
 )
 
-df["created_date"] = df["created_date"].fillna(pd.Timestamp.today())
-df["closed_date"] = df["closed_date"].fillna(df["created_date"])
+df["created_date"]=df["created_date"].fillna(pd.Timestamp.today())
+df["closed_date"]=df["closed_date"].fillna(df["created_date"])
 
-df["closure_days"] = (
-    df["closed_date"] -
-    df["created_date"]
-).dt.total_seconds() / 86400
+df["closure_days"]=(
+df["closed_date"]-
+df["created_date"]
+).dt.total_seconds()/86400
 
-df["closure_days"] = (
-    df["closure_days"]
-    .clip(lower=0)
-    .fillna(0)
+df["closure_days"]=(
+df["closure_days"]
+.clip(lower=0)
+.fillna(0)
 )
 
 
@@ -247,62 +249,61 @@ df["closure_days"] = (
 # -------------------------------------------------
 st.sidebar.header("Filters")
 
-all_depts = sorted(df.department.dropna().unique())
+all_depts=sorted(df.department.dropna().unique())
 
-dept = st.sidebar.multiselect(
-    "Department",
-    all_depts,
-    default=all_depts
+dept=st.sidebar.multiselect(
+"Department",
+all_depts,
+default=all_depts
 )
 
 if dept:
-    df = df[df.department.isin(dept)]
+    df=df[df.department.isin(dept)]
 
-status_vals = sorted(df.status.astype(str).unique())
+status_vals=sorted(df.status.astype(str).unique())
 
-status_filter = st.sidebar.multiselect(
-    "Status",
-    status_vals,
-    default=status_vals
+status_filter=st.sidebar.multiselect(
+"Status",
+status_vals,
+default=status_vals
 )
 
-df = df[df.status.astype(str).isin(status_filter)]
+df=df[df.status.astype(str).isin(status_filter)]
 
-page = st.sidebar.radio(
-    "Navigate",
-    [
-        "Overview",
-        "Operational KPI",
-        "Trend Analysis",
-        "Problem Analysis",
-        "Productivity",
-        "Root Cause"
-    ]
+page=st.sidebar.radio(
+"Navigate",
+[
+"Overview",
+"Operational KPI",
+"Trend Analysis",
+"Problem Analysis",
+"Productivity",
+"Root Cause"
+]
 )
 
 
 # -------------------------------------------------
 # KPI CALCULATIONS
 # -------------------------------------------------
-total = len(df)
-
-closed = (
-    df.status.astype(str)
-    .str.lower()
-    .eq("closed")
-    .sum()
+total=len(df)
+closed=(
+df.status.astype(str)
+.str.lower()
+.eq("closed")
+.sum()
 )
 
-pending = total - closed
-avg_close = round(df.closure_days.mean(), 2)
-sla = round((df.closure_days <= 2).mean() * 100, 2)
+pending=total-closed
+avg_close=round(df.closure_days.mean(),2)
+sla=round((df.closure_days<=2).mean()*100,2)
 
-critical = len(
-    df[
-        df.priority.astype(str)
-        .str.lower()
-        .isin(["high", "critical"])
-    ]
+critical=len(
+df[
+df.priority.astype(str)
+.str.lower()
+.isin(["high","critical"])
+]
 )
 
 
@@ -311,251 +312,351 @@ critical = len(
 # -------------------------------------------------
 def generate_pdf():
 
-    pdf = FPDF()
+    pdf=FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", "B", 18)
+    pdf.set_font("Arial","B",18)
 
     pdf.cell(
-        200, 10,
-        "IT Service Desk KPI Report",
-        ln=True
+    200,10,
+    "IT Service Desk KPI Report",
+    ln=True
     )
 
     pdf.ln(10)
-    pdf.set_font("Arial", "", 14)
+    pdf.set_font("Arial","",14)
 
-    metrics = [
-        f"Total Tickets: {total}",
-        f"Closed Tickets: {closed}",
-        f"Pending Tickets: {pending}",
-        f"Avg Closure Days: {avg_close}",
-        f"SLA Compliance: {sla}%",
-        f"Critical Tickets: {critical}"
+    metrics=[
+    f"Total Tickets: {total}",
+    f"Closed Tickets: {closed}",
+    f"Pending Tickets: {pending}",
+    f"Avg Closure Days: {avg_close}",
+    f"SLA Compliance: {sla}%",
+    f"Critical Tickets: {critical}"
     ]
 
     for item in metrics:
-        pdf.cell(200, 12, item, ln=True)
+        pdf.cell(200,12,item,ln=True)
 
-    filename = "dashboard_report.pdf"
+    filename="dashboard_report.pdf"
     pdf.output(filename)
 
-    with open(filename, "rb") as f:
+    with open(filename,"rb") as f:
         return f.read()
 
 
-csv = df.to_csv(index=False)
-st.sidebar.download_button("Download CSV", csv, "filtered.csv")
+csv=df.to_csv(index=False)
+st.sidebar.download_button("Download CSV",csv,"filtered.csv")
 
-pdf_bytes = generate_pdf()
+pdf_bytes=generate_pdf()
 
 st.sidebar.download_button(
-    "📄 Download PDF Report",
-    pdf_bytes,
-    file_name="dashboard_report.pdf",
-    mime="application/pdf"
+"📄 Download PDF Report",
+pdf_bytes,
+file_name="dashboard_report.pdf",
+mime="application/pdf"
 )
 
 
 # -------------------------------------------------
 # OVERVIEW
 # -------------------------------------------------
-if page == "Overview":
+if page=="Overview":
 
-    a,b,c,d,e,f = st.columns(6)
-    a.metric("Total", total)
-    b.metric("Closed", closed)
-    c.metric("Pending", pending)
-    d.metric("Avg Closure", avg_close)
-    e.metric("SLA %", sla)
-    f.metric("Critical", critical)
+    a,b,c,d,e,f=st.columns(6)
+    a.metric("Total",total)
+    b.metric("Closed",closed)
+    c.metric("Pending",pending)
+    d.metric("Avg Closure",avg_close)
+    e.metric("SLA %",sla)
+    f.metric("Critical",critical)
 
     st.markdown("---")
 
-    col1,col2 = st.columns(2)
+    col1,col2=st.columns(2)
 
     with col1:
 
-        status_mix = df.status.value_counts()
+        status_mix=df.status.value_counts()
 
-        fig1 = px.pie(
-            values=status_mix.values,
-            names=status_mix.index,
-            hole=.62,
-            title="Ticket Status Distribution",
-            color_discrete_sequence=px.colors.qualitative.Bold
+        fig1=px.pie(
+        values=status_mix.values,
+        names=status_mix.index,
+        hole=.62,
+        title="Ticket Status Distribution",
+        color_discrete_sequence=px.colors.qualitative.Bold
         )
 
         fig1.update_traces(
-            textposition="inside",
-            textinfo="percent",
-            pull=[0.02]*len(status_mix)
+        textposition="inside",
+        textinfo="percent",
+        pull=[0.02]*len(status_mix)
         )
 
         st.plotly_chart(
-            style_chart(fig1),
-            use_container_width=True
+        style_chart(fig1),
+        use_container_width=True
         )
 
     with col2:
 
-        priority_mix = df.priority.value_counts()
+        priority_mix=df.priority.value_counts()
 
-        fig2 = px.bar(
-            x=priority_mix.index,
-            y=priority_mix.values,
-            title="Priority Distribution"
+        fig2=px.bar(
+        x=priority_mix.index,
+        y=priority_mix.values,
+        title="Priority Distribution"
         )
 
         fig2.update_traces(
-            marker=dict(color=custom_colors)
+        marker=dict(color=custom_colors)
         )
 
         st.plotly_chart(
-            style_chart(fig2),
-            use_container_width=True
+        style_chart(fig2),
+        use_container_width=True
         )
 
 
-elif page == "Operational KPI":
+# -------------------------------------------------
+# OPERATIONAL KPI
+# -------------------------------------------------
+elif page=="Operational KPI":
 
-    r1,r2,r3 = st.columns(3)
-    r1.metric("Total Tickets", total)
-    r2.metric("Closed Tickets", closed)
-    r3.metric("Pending", pending)
+    r1,r2,r3=st.columns(3)
+    r1.metric("Total Tickets",total)
+    r2.metric("Closed Tickets",closed)
+    r3.metric("Pending",pending)
 
-    r4,r5,r6 = st.columns(3)
-    r4.metric("Avg Resolution", avg_close)
-    r5.metric("SLA %", sla)
-    r6.metric("Critical Tickets", critical)
+    r4,r5,r6=st.columns(3)
+    r4.metric("Avg Resolution",avg_close)
+    r5.metric("SLA %",sla)
+    r6.metric("Critical Tickets",critical)
 
 
-elif page == "Trend Analysis":
+# -------------------------------------------------
+# TREND ANALYSIS
+# -------------------------------------------------
+elif page=="Trend Analysis":
 
     st.subheader("Daily Ticket Trend")
 
-    daily = (
-        df.groupby(
-            df.created_date.dt.date
-        ).size()
-        .reset_index(name="Tickets")
+    daily=(
+    df.groupby(
+    df.created_date.dt.date
+    ).size()
+    .reset_index(name="Tickets")
     )
 
-    fig = px.line(
-        daily,
-        x="created_date",
-        y="Tickets",
-        markers=True
+    fig=px.line(
+    daily,
+    x="created_date",
+    y="Tickets",
+    markers=True
     )
 
     st.plotly_chart(
-        style_chart(fig),
-        use_container_width=True
+    style_chart(fig),
+    use_container_width=True
     )
 
 
-elif page == "Problem Analysis":
+    st.subheader("Monthly Ticket Trend")
 
-    issues = df.issue_type.value_counts().head(15)
+    monthly=(
+    df.groupby(
+    df.created_date.dt.to_period("M")
+    ).size()
+    .reset_index(name="Tickets")
+    )
 
-    fig = px.bar(
-        x=issues.index,
-        y=issues.values,
-        title="Top Issues"
+    monthly["created_date"]=monthly["created_date"].astype(str)
+
+    fig2=px.bar(
+    monthly,
+    x="created_date",
+    y="Tickets"
+    )
+
+    st.plotly_chart(
+    style_chart(fig2),
+    use_container_width=True
+    )
+
+
+    byhour=(
+    df.groupby(df.created_date.dt.hour)
+    .size()
+    .reset_index(name="Count")
+    .rename(columns={"created_date":"Hour"})
+    )
+
+    fig3=px.area(
+    byhour,
+    x="Hour",
+    y="Count",
+    title="Peak Hours"
+    )
+
+    st.plotly_chart(
+    style_chart(fig3),
+    use_container_width=True
+    )
+
+
+# -------------------------------------------------
+# PROBLEM ANALYSIS
+# -------------------------------------------------
+elif page=="Problem Analysis":
+
+    issues=df.issue_type.value_counts().head(15)
+
+    fig=px.bar(
+    x=issues.index,
+    y=issues.values,
+    title="Top Issues"
     )
 
     fig.update_traces(
-        marker=dict(
-            color=multi_colors,
-            line=dict(
-                color="rgba(255,255,255,0)",
-                width=0
-            )
-        )
+    marker=dict(
+    color=multi_colors,
+    line=dict(color="rgba(255,255,255,0)",width=0)
+    ))
+
+    st.plotly_chart(style_chart(fig),use_container_width=True)
+
+
+    dep=df.department.value_counts().head(10)
+
+    fig2=px.bar(
+    x=dep.index,
+    y=dep.values,
+    title="Department Volume"
     )
 
-    st.plotly_chart(
-        style_chart(fig),
-        use_container_width=True
+    fig2.update_traces(
+    marker=dict(
+    color=multi_colors,
+    line=dict(color="rgba(255,255,255,0)",width=0)
+    ))
+
+    st.plotly_chart(style_chart(fig2),use_container_width=True)
+
+
+    site=df.location.value_counts().head(10)
+
+    fig3=px.bar(
+    x=site.index,
+    y=site.values,
+    title="Site Issues"
     )
 
-
-elif page == "Productivity":
-
-    tech = (
-        df.groupby("engineer")
-        .size()
-        .reset_index(name="Tickets")
-        .sort_values("Tickets", ascending=False)
-        .head(15)
+    fig3.update_traces(
+    marker=dict(color=custom_colors)
     )
 
-    fig = px.bar(
-        tech,
-        x="engineer",
-        y="Tickets",
-        title="Technician Productivity"
+    st.plotly_chart(style_chart(fig3),use_container_width=True)
+
+
+# -------------------------------------------------
+# PRODUCTIVITY
+# -------------------------------------------------
+elif page=="Productivity":
+
+    tech=(
+    df.groupby("engineer")
+    .size()
+    .reset_index(name="Tickets")
+    .sort_values("Tickets",ascending=False)
+    .head(15)
+    )
+
+    fig=px.bar(
+    tech,
+    x="engineer",
+    y="Tickets",
+    title="Technician Productivity"
     )
 
     fig.update_traces(
-        marker=dict(
-            color=multi_colors,
-            line=dict(
-                color="rgba(255,255,255,0)",
-                width=0
-            )
-        )
+    marker=dict(
+    color=multi_colors,
+    line=dict(color="rgba(255,255,255,0)",width=0)
+    ))
+
+    st.plotly_chart(style_chart(fig),use_container_width=True)
+
+
+    res=(
+    df.groupby("engineer")["closure_days"]
+    .mean()
+    .reset_index()
+    .sort_values("closure_days")
+    .head(15)
     )
 
-    st.plotly_chart(
-        style_chart(fig),
-        use_container_width=True
+    fig2=px.bar(
+    res,
+    x="engineer",
+    y="closure_days",
+    title="Average Resolution Time by Technician"
     )
 
+    fig2.update_traces(
+    marker=dict(
+    color=multi_colors,
+    line=dict(color="rgba(255,255,255,0)",width=0)
+    ))
 
-elif page == "Root Cause":
+    st.plotly_chart(style_chart(fig2),use_container_width=True)
 
-    printer = df.issue_type.astype(str).str.contains(
-        "printer",
-        case=False,
-        na=False
+
+# -------------------------------------------------
+# ROOT CAUSE
+# -------------------------------------------------
+elif page=="Root Cause":
+
+    printer=df.issue_type.astype(str).str.contains(
+    "printer",
+    case=False,
+    na=False
     ).sum()
 
-    login = df.issue_type.astype(str).str.contains(
-        "login",
-        case=False,
-        na=False
+    login=df.issue_type.astype(str).str.contains(
+    "login",
+    case=False,
+    na=False
     ).sum()
 
-    network = df.issue_type.astype(str).str.contains(
-        "network",
-        case=False,
-        na=False
+    network=df.issue_type.astype(str).str.contains(
+    "network",
+    case=False,
+    na=False
     ).sum()
 
-    a,b,c = st.columns(3)
+    a,b,c=st.columns(3)
 
-    a.metric("Printer", int(printer))
-    b.metric("Login", int(login))
-    c.metric("Network", int(network))
+    a.metric("Printer",int(printer))
+    b.metric("Login",int(login))
+    c.metric("Network",int(network))
 
-    root = pd.DataFrame({
-        "Issue":["Printer","Login","Network"],
-        "Count":[printer,login,network]
+    root=pd.DataFrame({
+    "Issue":["Printer","Login","Network"],
+    "Count":[printer,login,network]
     })
 
-    fig = px.bar(
-        root,
-        x="Issue",
-        y="Count",
-        title="Root Cause Frequency"
+    fig=px.bar(
+    root,
+    x="Issue",
+    y="Count",
+    title="Root Cause Frequency"
     )
 
     fig.update_traces(
-        marker=dict(color=custom_colors)
+    marker=dict(color=custom_colors)
     )
 
     st.plotly_chart(
-        style_chart(fig),
-        use_container_width=True
+    style_chart(fig),
+    use_container_width=True
     )
 
