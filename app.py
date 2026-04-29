@@ -635,9 +635,7 @@ elif page=="Productivity":
 # -------------------------------------------------
 # ROOT CAUSE
 # -------------------------------------------------
-
-
-    elif page=="Root Cause":
+elif page=="Root Cause":
 
     # ----------------------------
     # Root Cause from Resolution
