@@ -474,7 +474,8 @@ elif page=="Trend Analysis":
     daily,
     x="created_date",
     y="Tickets",
-    markers=True
+    markers=True,
+    title="Daily Ticket Trend"    
     )
     fig.update_traces(
         name="Tickets",
