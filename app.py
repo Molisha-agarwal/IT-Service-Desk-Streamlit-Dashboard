@@ -494,29 +494,24 @@ elif page=="Trend Analysis":
     st.subheader("Monthly Ticket Trend")
 
     monthly=(
-    df.groupby(
-    df.created_date.dt.to_period("M")
-    ).size()
+    df.resample("M",on="created_date")
+    .size()
     .reset_index(name="Tickets")
     )
-
-    monthly["created_date"]=monthly["created_date"].astype(str)
 
     fig2=px.bar(
     monthly,
     x="created_date",
-    y="Tickets"
+    y="Tickets",
+    title="Monthly Ticket Trend"
     )
-    fig2.update_traces(
-        name="Tickets",
-        showlegend=False
-    )
+    
     fig2.update_layout(
         showlegend=False,
         xaxis_title="Month",
         yaxix_title="Tickets"
     )
-    fig2.for_each_trace(lambda t: t.update(name=""))
+    
     st.plotly_chart(
     style_chart(fig2),
     use_container_width=True
