@@ -3,6 +3,30 @@ import pandas as pd
 import plotly.express as px
 from fpdf import FPDF
 import os
+#-------------------------------------------------
+# PASSWORD
+#------------------------------------------------
+def check_password():
+    if "authenticated" not in st.session_state:
+        st.session_state.authenticated=False
+
+    if not st.session_state.authenticated:
+        password = st.text_input(
+            "Enter Password",
+            type="password"
+        )
+
+        if st.button("Login"):
+            if password == st.secrets["APP_PASSWORD"]:
+                st.session_state.authenticated=True
+                st.rerun()
+            else:
+                st.error("Incorrect password")
+
+        st.stop()
+
+check_password()
+
 
 # -------------------------------------------------
 # PAGE CONFIG
