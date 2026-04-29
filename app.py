@@ -507,11 +507,8 @@ elif page=="Trend Analysis":
     title="Monthly Ticket Trend"
     )
     
-    fig2.update_layout(
-        showlegend=False,
-        xaxis_title="Month",
-        yaxix_title="Tickets"
-    )
+    fig2.update_xaxes(title="Month")
+    fig2.update_yaxes(title="Tickets")
     
     st.plotly_chart(
     style_chart(fig2),
