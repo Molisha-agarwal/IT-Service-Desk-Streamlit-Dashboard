@@ -494,14 +494,15 @@ elif page=="Trend Analysis":
     st.subheader("Monthly Ticket Trend")
 
     monthly=(
-    df.resample("M",on="created_date")
+    df.groupby(df["created_date"].dt.strftime("%Y-%m")
+              )
     .size()
     .reset_index(name="Tickets")
     )
-
+    monthly.columns=["Month","Tickets"]
     fig2=px.bar(
     monthly,
-    x="created_date",
+    x="Month",
     y="Tickets",
     title="Monthly Ticket Trend"
     )
