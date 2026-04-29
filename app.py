@@ -75,7 +75,8 @@ def style_chart(fig):
         legend=dict(
             orientation="h",
             y=1.1
-        )
+        ),
+        showlegend=False,
     )
 
     return fig
@@ -475,7 +476,14 @@ elif page=="Trend Analysis":
     y="Tickets",
     markers=True
     )
-
+    fig.update_traces(
+        name="Tickets",
+        showlegend=False
+    )
+    fig.update_layout(
+        xaxis_title="Date",
+        yaxis_title="Tickets"
+    )    
     st.plotly_chart(
     style_chart(fig),
     use_container_width=True
@@ -498,7 +506,16 @@ elif page=="Trend Analysis":
     x="created_date",
     y="Tickets"
     )
-
+    fig2.update_traces(
+        name="Tickets",
+        showlegend=False
+    )
+    fig2.update_layout(
+        showlegend=False,
+        xaxis_title="Month",
+        yaxix_title="Tickets"
+    )
+    fig2.for_each_trace(lambda t: t.update(name=""))
     st.plotly_chart(
     style_chart(fig2),
     use_container_width=True
