@@ -204,7 +204,9 @@ mapping={
 'technician name':'engineer',
 'request status':'status',
 'priority type':'priority',
-'category':'issue_type'
+'category':'issue_type',
+'resolution':'resolution'
+
 }
 
 df.rename(columns=mapping,inplace=True)
@@ -241,7 +243,29 @@ df["closure_days"]
 .fillna(0)
 )
 
+#--------------------------------------------------
+# CALENDER
+#--------------------------------------------------
+st.sidebar.header("📅 Select Date Range")
 
+min_date = df["created_date"].min().date()
+max_date = df["created_date"].max().date()
+
+date_range = st.sidebar.date_input(
+    "Choose Date Range",
+    value=(min_date,max_date),
+    min_value=min_date,
+    max_value=max_date
+)
+
+# Apply filter only when both dates selected
+if len(date_range)==2:
+    start_date,end_date=date_range
+
+    df=df[
+        (df["created_date"].dt.date>=start_date) &
+        (df["created_date"].dt.date<=end_date)
+    ]
 # -------------------------------------------------
 # FILTERS
 # -------------------------------------------------
@@ -611,50 +635,143 @@ elif page=="Productivity":
 # -------------------------------------------------
 # ROOT CAUSE
 # -------------------------------------------------
-elif page=="Root Cause":
 
-    printer=df.issue_type.astype(str).str.contains(
-    "printer",
-    case=False,
-    na=False
-    ).sum()
 
-    login=df.issue_type.astype(str).str.contains(
-    "login",
-    case=False,
-    na=False
-    ).sum()
+    elif page=="Root Cause":
 
-    network=df.issue_type.astype(str).str.contains(
-    "network",
-    case=False,
-    na=False
-    ).sum()
+    # ----------------------------
+    # Root Cause from Resolution
+    # ----------------------------
+
+    printer_df=df[
+        df["resolution"].astype(str)
+        .str.contains("printer",case=False,na=False)
+    ]
+
+    login_df=df[
+        df["resolution"].astype(str)
+        .str.contains("login|password",case=False,na=False)
+    ]
+
+    network_df=df[
+        df["resolution"].astype(str)
+        .str.contains("network|internet|connectivity",case=False,na=False)
+    ]
+
+
+    printer=len(printer_df)
+    login=len(login_df)
+    network=len(network_df)
+
 
     a,b,c=st.columns(3)
 
-    a.metric("Printer",int(printer))
-    b.metric("Login",int(login))
-    c.metric("Network",int(network))
+    a.metric("Repeat Printer Failures",printer)
+    b.metric("Frequent Login Issues",login)
+    c.metric("Network Downtime",network)
 
+
+    # Root Cause Frequency Chart
     root=pd.DataFrame({
-    "Issue":["Printer","Login","Network"],
-    "Count":[printer,login,network]
+    "Issue":[
+        "Printer Failures",
+        "Login Issues",
+        "Network Downtime"
+    ],
+    "Count":[
+        printer,
+        login,
+        network
+    ]
     })
 
     fig=px.bar(
-    root,
-    x="Issue",
-    y="Count",
-    title="Root Cause Frequency"
-    )
-
-    fig.update_traces(
-    marker=dict(color=custom_colors)
+        root,
+        x="Issue",
+        y="Count",
+        title="Root Cause Frequency"
     )
 
     st.plotly_chart(
-    style_chart(fig),
-    use_container_width=True
+        style_chart(fig),
+        use_container_width=True
     )
+
+
+    # ----------------------------
+    # Repeat Printer Failures Trend
+    # ----------------------------
+
+    printer_trend=(
+      printer_df.groupby(
+      printer_df.created_date.dt.to_period("M")
+      ).size()
+      .reset_index(name="Count")
+    )
+
+    printer_trend["created_date"]=printer_trend["created_date"].astype(str)
+
+    fig2=px.line(
+        printer_trend,
+        x="created_date",
+        y="Count",
+        markers=True,
+        title="Repeat Printer Failures Trend"
+    )
+
+    st.plotly_chart(style_chart(fig2),use_container_width=True)
+
+
+
+    # ----------------------------
+    # Frequent Login Issues Trend
+    # ----------------------------
+
+    login_trend=(
+      login_df.groupby(
+      login_df.created_date.dt.to_period("M")
+      ).size()
+      .reset_index(name="Count")
+    )
+
+    login_trend["created_date"]=login_trend["created_date"].astype(str)
+
+    fig3=px.line(
+        login_trend,
+        x="created_date",
+        y="Count",
+        markers=True,
+        title="Frequent Login Issues Trend"
+    )
+
+    st.plotly_chart(style_chart(fig3),use_container_width=True)
+
+
+
+    # ----------------------------
+    # Network Downtime Trend
+    # ----------------------------
+
+    network_trend=(
+      network_df.groupby(
+      network_df.created_date.dt.to_period("M")
+      ).size()
+      .reset_index(name="Count")
+    )
+
+    network_trend["created_date"]=network_trend["created_date"].astype(str)
+
+    fig4=px.line(
+        network_trend,
+        x="created_date",
+        y="Count",
+        markers=True,
+        title="Network Downtime Trend"
+    )
+
+    st.plotly_chart(
+      style_chart(fig4),
+      use_container_width=True
+    )
+    
 
