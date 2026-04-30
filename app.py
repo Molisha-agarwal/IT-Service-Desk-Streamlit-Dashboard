@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 from fpdf import FPDF
 import os
+from ai_assistant import run_ai_assistant
 #-------------------------------------------------
 # PASSWORD
 #------------------------------------------------
@@ -316,6 +317,7 @@ default=status_vals
 )
 
 df=df[df.status.astype(str).isin(status_filter)]
+run_ai_assistant(df)
 
 page=st.sidebar.radio(
 "Navigate",
