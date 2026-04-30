@@ -620,7 +620,7 @@ elif page=="Problem Analysis":
 elif page=="Productivity":
 
     tech=(
-    df.groupby("engineer")
+    df.groupby("Technician")
     .size()
     .reset_index(name="Tickets")
     .sort_values("Tickets",ascending=False)
@@ -629,7 +629,7 @@ elif page=="Productivity":
 
     fig=px.bar(
     tech,
-    x="engineer",
+    x="technician",
     y="Tickets",
     title="Technician Productivity"
     )
@@ -644,7 +644,7 @@ elif page=="Productivity":
 
 
     res=(
-    df.groupby("engineer")["closure_days"]
+    df.groupby("Technician")["closure_days"]
     .mean()
     .reset_index()
     .sort_values("closure_days")
@@ -653,7 +653,7 @@ elif page=="Productivity":
 
     fig2=px.bar(
     res,
-    x="engineer",
+    x="technician",
     y="closure_days",
     title="Average Resolution Time by Technician"
     )
