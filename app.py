@@ -226,7 +226,7 @@ mapping={
 'created time':'created_date',
 'completed time':'closed_date',
 'site':'location',
-'technician name':'engineer',
+'technician ':'technician',
 'request status':'status',
 'priority type':'priority',
 'category':'issue_type',
@@ -620,7 +620,7 @@ elif page=="Problem Analysis":
 elif page=="Productivity":
 
     tech=(
-    df.groupby("Technician")
+    df.groupby("technician")
     .size()
     .reset_index(name="Tickets")
     .sort_values("Tickets",ascending=False)
@@ -644,7 +644,7 @@ elif page=="Productivity":
 
 
     res=(
-    df.groupby("Technician")["closure_days"]
+    df.groupby("technician")["closure_days"]
     .mean()
     .reset_index()
     .sort_values("closure_days")
