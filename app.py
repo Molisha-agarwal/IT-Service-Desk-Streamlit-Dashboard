@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from fpdf import FPDF
 import os
-from ai_assistant import run_ai_assistant
+
 #-------------------------------------------------
 # PASSWORD
 #------------------------------------------------
@@ -308,7 +308,7 @@ default=all_depts
 if dept:
     df=df[df.department.isin(dept)]
 
-status_vals=sorted(df.status.astype(str).unique())
+status_vals=sorted(df['request status'].astype(str).unique())
 
 status_filter=st.sidebar.multiselect(
 "Status",
@@ -317,7 +317,7 @@ default=status_vals
 )
 
 df=df[df.status.astype(str).isin(status_filter)]
-run_ai_assistant(df)
+
 
 page=st.sidebar.radio(
 "Navigate",
