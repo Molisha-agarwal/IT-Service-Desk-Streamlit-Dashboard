@@ -308,7 +308,7 @@ default=all_depts
 if dept:
     df=df[df.department.isin(dept)]
 
-status_vals=sorted(df['request status'].astype(str).unique())
+status_vals=sorted(df['status'].astype(str).unique())
 
 status_filter=st.sidebar.multiselect(
 "Status",
