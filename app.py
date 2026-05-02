@@ -216,7 +216,6 @@ f"Loaded Records: {len(df)}"
 # -------------------------------------------------
 # COLUMN MAPPING
 # -------------------------------------------------
-
 df.columns = (
     df.columns
     .str.strip()
@@ -231,7 +230,6 @@ mapping = {
     'completedtime': 'closed_date',
     'site': 'location',
     'technician': 'technician',
-    'requeststatus': 'status',
     'prioritytype': 'priority',
     'category': 'issue_type',
     'resolution': 'resolution',
@@ -240,10 +238,26 @@ mapping = {
 
 df.rename(columns=mapping, inplace=True)
 
-# Safety check (prevents crash)
+# ----------------------------
+# AUTO DETECT STATUS COLUMN
+# ----------------------------
+possible_status_cols = [
+    'requeststatus',
+    'status',
+    'ticketstatus'
+]
+
+for col in possible_status_cols:
+    if col in df.columns:
+        df.rename(columns={col: 'status'}, inplace=True)
+        break
+
+# ----------------------------
+# SAFETY CHECK
+# ----------------------------
 if 'status' not in df.columns:
-    st.error("❌ 'status' column not found after mapping")
-    st.write(df.columns.tolist())
+    st.error("❌ Status column not found in dataset")
+    st.write("Available columns:", df.columns.tolist())
     st.stop()
 
 
