@@ -272,7 +272,7 @@ df["closure_days"]
 #--------------------------------------------------
 # CALENDER
 #--------------------------------------------------
-st.sidebar.header("📅 Select Date Range")
+st.sidebar.header("📅 Select Date ")
 
 min_date = df["created_date"].min().date()
 max_date = df["created_date"].max().date()
