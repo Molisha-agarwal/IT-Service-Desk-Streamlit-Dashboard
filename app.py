@@ -346,10 +346,12 @@ st.sidebar.header("Filters")
 # ----------------------------
 # STATUS FILTER 
 # ----------------------------
-# Replace empty string with label "Blank" for display
-df['status_display'] = df['status'].replace('', 'Blank')
+df['status_display'] = df['status'].apply(
+    lambda x: 'Blank' if x == '' else x
+)
 
-status_vals = sorted(df['status_display'].unique().tolist())
+
+status_vals = sorted(list(set(df['status_display'])))
 
 status_filter = st.sidebar.multiselect(
     "Status",
@@ -363,8 +365,8 @@ selected_status = [
     for s in status_filter
 ]
 
+# Correct filtering
 df_temp = df[df['status'].isin(selected_status)]
-df_temp = df[df.status.astype(str).isin(status_filter)]
 
 # ----------------------------
 # DEPARTMENT FILTER 
