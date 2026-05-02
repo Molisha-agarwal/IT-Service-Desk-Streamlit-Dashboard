@@ -302,26 +302,38 @@ df = df[
 # -------------------------------------------------
 st.sidebar.header("Filters")
 
-all_depts=sorted(df.department.dropna().unique())
+# ----------------------------
+# STATUS FILTER 
+# ----------------------------
+status_vals = sorted(df['status'].astype(str).unique())
 
-dept=st.sidebar.multiselect(
-"Department",
-all_depts,
-default=all_depts
+status_filter = st.sidebar.multiselect(
+    "Status",
+    status_vals,
+    default=status_vals
 )
 
-if dept:
-    df=df[df.department.isin(dept)]
 
-status_vals=sorted(df['status'].astype(str).unique())
+df_temp = df[df.status.astype(str).isin(status_filter)]
 
-status_filter=st.sidebar.multiselect(
-"Status",
-status_vals,
-default=status_vals
+# ----------------------------
+# DEPARTMENT FILTER 
+# ----------------------------
+all_depts = sorted(df_temp.department.dropna().unique())
+
+dept = st.sidebar.multiselect(
+    "Department",
+    all_depts,
+    default=all_depts
 )
 
-df=df[df.status.astype(str).isin(status_filter)]
+# ----------------------------
+# APPLY FINAL FILTERS
+# ----------------------------
+df = df[
+    (df.status.astype(str).isin(status_filter)) &
+    (df.department.isin(dept))
+]
 
 
 page=st.sidebar.radio(
