@@ -294,7 +294,10 @@ df["closure_days"]
 #--------------------------------------------------
 # CALENDER
 #--------------------------------------------------
-st.sidebar.header("📅 Select Date")
+#--------------------------------------------------
+# CALENDER (MONTH RANGE SELECTOR)
+#--------------------------------------------------
+st.sidebar.header("📅 Select Date ")
 
 # Create Year and Month columns
 df["year"] = df["created_date"].dt.year
@@ -308,16 +311,31 @@ months = list(range(1, 13))
 # Sidebar selectors
 selected_year = st.sidebar.selectbox("Select Year", years)
 
-selected_month = st.sidebar.selectbox(
-    "Select Month",
+col1, col2 = st.sidebar.columns(2)
+
+start_month = col1.selectbox(
+    "Start Month",
     months,
-    format_func=lambda x: pd.to_datetime(str(x), format="%m").strftime("%B")
+    format_func=lambda x: pd.to_datetime(str(x), format="%m").strftime("%B"),
+    index=0
 )
+
+end_month = col2.selectbox(
+    "End Month",
+    months,
+    format_func=lambda x: pd.to_datetime(str(x), format="%m").strftime("%B"),
+    index=11
+)
+
+# Validation (important)
+if start_month > end_month:
+    st.sidebar.error("Start month should be before or equal to End month")
 
 # Apply filter
 df = df[
     (df["year"] == selected_year) &
-    (df["month"] == selected_month)
+    (df["month"] >= start_month) &
+    (df["month"] <= end_month)
 ]
 # -------------------------------------------------
 # FILTERS
