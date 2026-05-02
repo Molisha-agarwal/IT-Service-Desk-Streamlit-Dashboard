@@ -257,8 +257,9 @@ df['status'] = (
     .astype(str)
     .str.strip()
     .str.lower()
-    .replace(['nan', 'none', ''], 'unknown')
 )
+
+df['status'] = df['status'].replace(['nan', 'none'], '')
 
 # -------------------------------------------------
 # DATES
@@ -345,7 +346,10 @@ st.sidebar.header("Filters")
 # ----------------------------
 # STATUS FILTER 
 # ----------------------------
-status_vals = sorted(df['status'].dropna().unique().tolist())
+# Replace empty string with label "Blank" for display
+df['status_display'] = df['status'].replace('', 'Blank')
+
+status_vals = sorted(df['status_display'].unique().tolist())
 
 status_filter = st.sidebar.multiselect(
     "Status",
@@ -353,7 +357,13 @@ status_filter = st.sidebar.multiselect(
     default=status_vals
 )
 
+# Map back "Blank" to actual empty string
+selected_status = [
+    '' if s == 'Blank' else s
+    for s in status_filter
+]
 
+df_temp = df[df['status'].isin(selected_status)]
 df_temp = df[df.status.astype(str).isin(status_filter)]
 
 # ----------------------------
@@ -371,7 +381,7 @@ dept = st.sidebar.multiselect(
 # APPLY FINAL FILTERS
 # ----------------------------
 df = df[
-    (df.status.astype(str).isin(status_filter)) &
+    (df.status.isin(selected_status)) &
     (df.department.isin(dept))
 ]
 
