@@ -216,26 +216,35 @@ f"Loaded Records: {len(df)}"
 # -------------------------------------------------
 # COLUMN MAPPING
 # -------------------------------------------------
-df.columns=(
-df.columns
-.str.strip()
-.str.lower()
+
+df.columns = (
+    df.columns
+    .str.strip()
+    .str.lower()
+    .str.replace(r'[^a-z0-9]', '', regex=True)
 )
 
-mapping={
-'request id':'ticket_id',
-'created time':'created_date',
-'completed time':'closed_date',
-'site':'location',
-'technician ':'technician',
-'request status':'status',
-'priority type':'priority',
-'category':'issue_type',
-'resolution':'resolution'
 
+mapping = {
+    'requestid': 'ticket_id',
+    'createdtime': 'created_date',
+    'completedtime': 'closed_date',
+    'site': 'location',
+    'technician': 'technician',
+    'requeststatus': 'status',
+    'prioritytype': 'priority',
+    'category': 'issue_type',
+    'resolution': 'resolution',
+    'department': 'department'
 }
 
-df.rename(columns=mapping,inplace=True)
+df.rename(columns=mapping, inplace=True)
+
+# Safety check (prevents crash)
+if 'status' not in df.columns:
+    st.error("❌ 'status' column not found after mapping")
+    st.write(df.columns.tolist())
+    st.stop()
 
 
 # -------------------------------------------------
