@@ -223,7 +223,7 @@ df.columns = (
     .str.replace(r'[^a-z0-9]', '', regex=True)
 )
 
-
+# Rename  columns
 mapping = {
     'requestid': 'ticket_id',
     'createdtime': 'created_date',
@@ -238,28 +238,27 @@ mapping = {
 
 df.rename(columns=mapping, inplace=True)
 
-# ----------------------------
-# AUTO DETECT STATUS COLUMN
-# ----------------------------
-possible_status_cols = [
-    'requeststatus',
-    'status',
-    'ticketstatus'
-]
+status_col = None
 
-for col in possible_status_cols:
-    if col in df.columns:
-        df.rename(columns={col: 'status'}, inplace=True)
+for col in df.columns:
+    if 'status' in col:
+        status_col = col
         break
 
-# ----------------------------
-# SAFETY CHECK
-# ----------------------------
-if 'status' not in df.columns:
-    st.error("❌ Status column not found in dataset")
-    st.write("Available columns:", df.columns.tolist())
+if status_col:
+    df.rename(columns={status_col: 'status'}, inplace=True)
+else:
+    st.error("❌ No STATUS column found in dataset")
+    st.write("Columns found:", df.columns.tolist())
     st.stop()
 
+df['status'] = (
+    df['status']
+    .astype(str)
+    .str.strip()
+    .str.lower()
+    .replace(['nan', 'none', ''], 'unknown')
+)
 
 # -------------------------------------------------
 # DATES
@@ -328,7 +327,7 @@ st.sidebar.header("Filters")
 # ----------------------------
 # STATUS FILTER 
 # ----------------------------
-status_vals = sorted(df['status'].astype(str).unique())
+status_vals = sorted(df['status'].dropna().unique().tolist())
 
 status_filter = st.sidebar.multiselect(
     "Status",
