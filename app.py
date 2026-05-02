@@ -272,26 +272,31 @@ df["closure_days"]
 #--------------------------------------------------
 # CALENDER
 #--------------------------------------------------
-st.sidebar.header("📅 Select Date ")
+st.sidebar.header("📅 Select Date")
 
-min_date = df["created_date"].min().date()
-max_date = df["created_date"].max().date()
+# Create Year and Month columns
+df["year"] = df["created_date"].dt.year
+df["month"] = df["created_date"].dt.month
+df["month_name"] = df["created_date"].dt.strftime("%B")
 
-date_range = st.sidebar.date_input(
-    "Choose Date Range",
-    value=(min_date,max_date),
-    min_value=min_date,
-    max_value=max_date
+# Unique values
+years = sorted(df["year"].dropna().unique())
+months = list(range(1, 13))
+
+# Sidebar selectors
+selected_year = st.sidebar.selectbox("Select Year", years)
+
+selected_month = st.sidebar.selectbox(
+    "Select Month",
+    months,
+    format_func=lambda x: pd.to_datetime(str(x), format="%m").strftime("%B")
 )
 
-# Apply filter only when both dates selected
-if len(date_range)==2:
-    start_date,end_date=date_range
-
-    df=df[
-        (df["created_date"].dt.date>=start_date) &
-        (df["created_date"].dt.date<=end_date)
-    ]
+# Apply filter
+df = df[
+    (df["year"] == selected_year) &
+    (df["month"] == selected_month)
+]
 # -------------------------------------------------
 # FILTERS
 # -------------------------------------------------
