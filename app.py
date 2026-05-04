@@ -179,6 +179,30 @@ border-radius:14px;
 padding:12px 22px;
 font-weight:700;
 }
+.tooltip {
+    position: relative;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    background-color: #111827;
+    color: #fff;
+    border-radius: 6px;
+    padding: 6px 10px;
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
 </style>
 """,unsafe_allow_html=True)
 
@@ -216,34 +240,9 @@ def kpi_card(title, value):
             <span class="tooltiptext">{full_value}</span>
         </div>
     </div>
-
-    <style>
-    .tooltip {{
-        position: relative;
-    }}
-
-    .tooltip .tooltiptext {{
-        visibility: hidden;
-        background-color: #111827;
-        color: #fff;
-        border-radius: 6px;
-        padding: 6px 10px;
-        position: absolute;
-        bottom: 120%;
-        left: 50%;
-        transform: translateX(-50%);
-        opacity: 0;
-        transition: opacity 0.3s;
-        font-size: 13px;
-        white-space: nowrap;
-    }}
-
-    .tooltip:hover .tooltiptext {{
-        visibility: visible;
-        opacity: 1;
-    }}
-    </style>
     """, unsafe_allow_html=True)
+
+    
 
 # -------------------------------------------------
 # TITLE
