@@ -217,30 +217,12 @@ def kpi_card(title, value):
     if len(short_value) > 4:
         short_value = short_value[:3] + "..."
 
-    st.markdown(f"""
-    <div style="
-        background:linear-gradient(145deg, rgba(30,41,59,.95), rgba(15,23,42,.95));
-        padding:22px;
-        border-radius:22px;
-        border:1px solid rgba(96,165,250,.25);
-        text-align:center;
-        cursor:pointer;
-    ">
-
-        <div style="color:white; font-weight:600; font-size:14px;">
-            {title}
-        </div>
-
-        <div class="tooltip" style="
-            color:#38bdf8;
-            font-size:34px;
-            font-weight:800;
-        ">
-            {short_value}
-            <span class="tooltiptext">{full_value}</span>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(f"**{title}**")
+    st.metric(
+        label="",
+        value=short_value,
+        help=f"Full Value: {full_value}"
+    )
 
     
 
