@@ -182,6 +182,68 @@ font-weight:700;
 </style>
 """,unsafe_allow_html=True)
 
+#---------------------------
+# hover of kpi card
+#--------------------------
+def kpi_card(title, value):
+
+    full_value = f"{value:,}"
+
+    short_value = str(value)
+    if len(short_value) > 4:
+        short_value = short_value[:3] + "..."
+
+    st.markdown(f"""
+    <div style="
+        background:linear-gradient(145deg, rgba(30,41,59,.95), rgba(15,23,42,.95));
+        padding:22px;
+        border-radius:22px;
+        border:1px solid rgba(96,165,250,.25);
+        text-align:center;
+        cursor:pointer;
+    ">
+
+        <div style="color:white; font-weight:600; font-size:14px;">
+            {title}
+        </div>
+
+        <div class="tooltip" style="
+            color:#38bdf8;
+            font-size:34px;
+            font-weight:800;
+        ">
+            {short_value}
+            <span class="tooltiptext">{full_value}</span>
+        </div>
+    </div>
+
+    <style>
+    .tooltip {{
+        position: relative;
+    }}
+
+    .tooltip .tooltiptext {{
+        visibility: hidden;
+        background-color: #111827;
+        color: #fff;
+        border-radius: 6px;
+        padding: 6px 10px;
+        position: absolute;
+        bottom: 120%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 13px;
+        white-space: nowrap;
+    }}
+
+    .tooltip:hover .tooltiptext {{
+        visibility: visible;
+        opacity: 1;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
 
 # -------------------------------------------------
 # TITLE
@@ -482,13 +544,19 @@ mime="application/pdf"
 # -------------------------------------------------
 if page=="Overview":
 
-    a,b,c,d,e,f=st.columns(6)
-    a.metric("Total",total)
-    b.metric("Closed",closed)
-    c.metric("Pending",pending)
-    d.metric("Avg Closure",avg_close)
-    e.metric("SLA %",sla)
-    f.metric("Critical",critical)
+a,b,c,d,e,f=st.columns(6)
+with a:
+    kpi_card("Total", total)
+with b:
+    kpi_card("Closed", closed)
+with c:
+    kpi_card("Pending", pending)
+with d:
+    kpi_card("Avg Closure", avg_close)
+with e:
+    kpi_card("SLA %", sla)
+with f:
+    kpi_card("Critical", critical)
 
     st.markdown("---")
 
