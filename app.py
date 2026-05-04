@@ -544,19 +544,19 @@ mime="application/pdf"
 # -------------------------------------------------
 if page=="Overview":
 
-a,b,c,d,e,f=st.columns(6)
-with a:
-    kpi_card("Total", total)
-with b:
-    kpi_card("Closed", closed)
-with c:
-    kpi_card("Pending", pending)
-with d:
-    kpi_card("Avg Closure", avg_close)
-with e:
-    kpi_card("SLA %", sla)
-with f:
-    kpi_card("Critical", critical)
+    a,b,c,d,e,f=st.columns(6)
+    with a:
+        kpi_card("Total", total)
+    with b:
+        kpi_card("Closed", closed)
+    with c:
+        kpi_card("Pending", pending)
+    with d:
+        kpi_card("Avg Closure", avg_close)
+    with e:
+        kpi_card("SLA %", sla)
+    with f:
+        kpi_card("Critical", critical)
 
     st.markdown("---")
 
