@@ -151,7 +151,7 @@ box-shadow:
 
 div[data-testid="stMetricValue"]{
 color:#38bdf8;
-font-size:34px;
+font-size:42px;
 font-weight:800;
 }
 
@@ -213,14 +213,10 @@ def kpi_card(title, value):
 
     full_value = f"{value:,}"
 
-    short_value = str(value)
-    if len(short_value) > 4:
-        short_value = short_value[:3] + "..."
-
     st.markdown(f"**{title}**")
     st.metric(
         label="",
-        value=short_value,
+        value=full_value,
         help=f"Full Value: {full_value}"
     )
 
@@ -525,7 +521,8 @@ mime="application/pdf"
 # -------------------------------------------------
 if page=="Overview":
 
-    a,b,c,d,e,f=st.columns(6)
+    a,b,c=st.columns(3)
+    d,e,f=st.columns(3)
     with a:
         kpi_card("Total", total)
     with b:
