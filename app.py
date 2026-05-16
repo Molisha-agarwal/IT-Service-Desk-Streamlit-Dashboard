@@ -151,7 +151,7 @@ box-shadow:
 
 div[data-testid="stMetricValue"]{
 color:#38bdf8;
-font-size:42px;
+font-size:37px;
 font-weight:800;
 }
 
